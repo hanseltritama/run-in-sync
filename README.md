@@ -30,7 +30,7 @@ An Android app for rhythm-based running that matches your stride cadence to musi
 
 Post-run **Summary** screen (example from a debug quick-test run):
 
-![Summary screen: overall average score, longest streak, warm-up and main song breakdown, and Back](docs/screenshots/summary.png)
+<img src="docs/screenshots/summary.png" alt="Summary screen: overall average score, longest streak, warm-up and main song breakdown, and Back" width="250" />
 
 ## Project Structure
 
