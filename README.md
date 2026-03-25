@@ -26,6 +26,12 @@ An Android app for rhythm-based running that matches your stride cadence to musi
 - **Run** → start a run from `RunScreen`; when the playlist finishes, `RunViewModel` saves the session and exposes `completedSession`
 - **Summary** → `MainActivity` shows `SummaryScreen` with that session; **Back** clears `completedSession` and returns to **Run**
 
+## Screenshot
+
+Post-run **Summary** screen (example from a debug quick-test run):
+
+![Summary screen: overall average score, longest streak, warm-up and main song breakdown, and Back](docs/screenshots/summary.png)
+
 ## Project Structure
 
 ```
