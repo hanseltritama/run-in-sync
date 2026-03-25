@@ -2,8 +2,6 @@ package com.example.runinsync.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -11,7 +9,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.FilterChip
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -68,7 +69,7 @@ fun RunScreen(
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RunScreenContent(
     modifier: Modifier = Modifier,
@@ -92,25 +93,42 @@ private fun RunScreenContent(
             style = MaterialTheme.typography.headlineMedium
         )
 
-        Text(
-            text = "Duration",
-            style = MaterialTheme.typography.titleSmall
-        )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        var durationMenuExpanded by remember { mutableStateOf(false) }
+        ExposedDropdownMenuBox(
+            expanded = durationMenuExpanded,
+            onExpandedChange = { expanded ->
+                if (!runState.isRunning) durationMenuExpanded = expanded
+            },
+            modifier = Modifier.fillMaxWidth()
         ) {
-            DurationPresets.forEach { minutes ->
-                FilterChip(
-                    selected = durationMinutes == minutes,
-                    onClick = {
-                        if (!runState.isRunning) {
+            OutlinedTextField(
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth(),
+                readOnly = true,
+                value = "${durationMinutes} min",
+                onValueChange = {},
+                label = { Text("Duration") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = durationMenuExpanded)
+                },
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                enabled = !runState.isRunning
+            )
+            ExposedDropdownMenu(
+                expanded = durationMenuExpanded,
+                onDismissRequest = { durationMenuExpanded = false }
+            ) {
+                DurationPresets.forEach { minutes ->
+                    DropdownMenuItem(
+                        text = { Text("${minutes} min") },
+                        onClick = {
                             onDurationSelected(minutes)
-                        }
-                    },
-                    label = { Text("${minutes} min") }
-                )
+                            durationMenuExpanded = false
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
+                }
             }
         }
 
