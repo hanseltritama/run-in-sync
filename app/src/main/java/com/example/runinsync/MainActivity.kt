@@ -7,10 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.runinsync.ui.RunScreen
+import com.example.runinsync.ui.RunViewModel
+import com.example.runinsync.ui.SummaryScreen
 import com.example.runinsync.ui.theme.RunInSyncTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +23,28 @@ class MainActivity : ComponentActivity() {
 		enableEdgeToEdge()
 		setContent {
 			RunInSyncTheme {
-				Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-					Greeting(
-						name = "Android",
-						modifier = Modifier.padding(innerPadding)
-					)
-				}
+				RunApp()
 			}
 		}
 	}
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-	Text(
-		text = "Hello $name!",
-		modifier = modifier
-	)
-}
+private fun RunApp() {
+	val viewModel: RunViewModel = viewModel()
+	val completedSession by viewModel.completedSession.collectAsState()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-	RunInSyncTheme {
-		Greeting("Android")
+	Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+		when (val session = completedSession) {
+			null -> RunScreen(
+				modifier = Modifier.padding(innerPadding),
+				viewModel = viewModel
+			)
+			else -> SummaryScreen(
+				runSession = session,
+				onBack = { viewModel.clearCompletedSession() },
+				modifier = Modifier.padding(innerPadding)
+			)
+		}
 	}
 }
